@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GuideMe</string>
+    <string name="tab_text_1">Dashboard</string>
+    <string name="tab_text_2">Settings</string>
+    <string name="battery_display_heading">Battery</string>
+    <string name="time_remain_heading">Time Remaining:</string>
+    <string name="vibration_setting_header">Vibration Strength</string>
+    <string name="vibration_default">XYZ%</string>
+    <string name="vibration_min">Weak</string>
+    <string name="vibration_max">Strong</string>
+    <string name="distance_setting_header">Distance Detection</string>
+    <string name="distance_default">XYZ m</string>
+    <string name="distance_min">1.0 m</string>
+    <string name="distance_max">4.5 m</string>
+    <string name="action_settings">Settings</string>
+</resources>
