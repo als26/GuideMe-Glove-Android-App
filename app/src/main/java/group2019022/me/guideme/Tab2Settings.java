@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +123,9 @@ public class Tab2Settings extends Fragment implements BluetoothSerialListener, B
 
                 //send data to bluetooth
                 if (bluetoothSerial.isConnected()) {
-                    bluetoothSerial.write(Key_VIBRATION_SLIDER);
+                    bluetoothSerial.write("v" + (savedVibrationSlider));
+                    Log.d("sentVibrationValues", "Value: " + Integer.toString(savedVibrationSlider));
+
                 }
 
             }
@@ -162,6 +165,13 @@ public class Tab2Settings extends Fragment implements BluetoothSerialListener, B
                 editor.putInt(Key_DISTANCE_SLIDER, savedDistanceSlider);
                 editor.putString(Key_DISTANCE_VALUE, savedDistanceDisplay);
                 editor.commit();
+
+                //send data to bluetooth
+                if (bluetoothSerial.isConnected()) {
+                    bluetoothSerial.write("d"+ savedDistanceSlider);
+                    Log.d("sentDistanceValues", "Value: " + savedDistanceSlider);
+
+                }
             }
         });
 
@@ -189,10 +199,13 @@ public class Tab2Settings extends Fragment implements BluetoothSerialListener, B
     private void updateBluetoothState() {
         // Get the current Bluetooth state
         final int state;
-        if (bluetoothSerial != null)
+        if (bluetoothSerial != null) {
             state = bluetoothSerial.getState();
-        else
+        }
+
+        else {
             state = BluetoothSerial.STATE_DISCONNECTED;
+        }
 
         // Display the current state on the app bar as the subtitle
         String subtitle;
@@ -202,6 +215,8 @@ public class Tab2Settings extends Fragment implements BluetoothSerialListener, B
                 break;
             case BluetoothSerial.STATE_CONNECTED:
                 subtitle = getString(R.string.connected_device) + bluetoothSerial.getConnectedDeviceName();
+                //Code to set value on bluetooth start
+                //bluetoothSerial.write(Integer.toString(loadedVibrationSlider));
                 break;
             default:
                 subtitle = getString(R.string.find_device);
@@ -288,8 +303,11 @@ public class Tab2Settings extends Fragment implements BluetoothSerialListener, B
     @Override
     public void onStart() {
         super.onStart();
-        bluetoothSerial.setup();
-        updateBluetoothState();
+        //if (!bluetoothSerial.checkBluetooth()) {
+            bluetoothSerial.setup();
+        //}
+
+        //updateBluetoothState();
     }
 
     @Override
@@ -302,7 +320,7 @@ public class Tab2Settings extends Fragment implements BluetoothSerialListener, B
                 bluetoothSerial.start();
             }
         }
-        updateBluetoothState();
+        //updateBluetoothState();
     }
 
     @Override
