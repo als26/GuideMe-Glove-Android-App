@@ -1,27 +1,32 @@
 package group2019022.me.guideme;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 
-import android.widget.TextView;
-
+import com.macroyau.blue2serial.BluetoothDeviceListDialog;
 import com.macroyau.blue2serial.BluetoothSerial;
+import com.macroyau.blue2serial.BluetoothSerialListener;
 
-public class MainActivity extends AppCompatActivity {
+import group2019022.me.guideme.fragments.SectionsPagerAdapter;
+
+public class MainActivity extends AppCompatActivity implements BluetoothSerialListener, BluetoothDeviceListDialog.OnDeviceSelectedListener {
+
+    private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+    private BluetoothSerial bluetoothSerial;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -37,30 +42,17 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private Toolbar mToolbar;
+    private Button bluetoothButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
+        bindViews();
+        bluetoothSerial = new BluetoothSerial(this, this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -84,36 +76,157 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bluetoothSerial.setup();
+        updateBluetoothState();
+    }
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            switch(position) {
-                case 0:
-                    Tab1Dashboard tab1 = new Tab1Dashboard();
-                    return tab1;
-                case 1:
-                    Tab2Settings tab2 = new Tab2Settings();
-                    return tab2;
-                default:
-                    return null;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bluetoothSerial.checkBluetooth() && bluetoothSerial.isBluetoothEnabled()) {
+            if (!bluetoothSerial.isConnected()) {
+                bluetoothSerial.start();
             }
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 2;
+            updateBluetoothState();
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_ENABLE_BLUETOOTH:
+                // Set up Bluetooth serial port when Bluetooth adapter is turned on
+                if (resultCode == Activity.RESULT_OK) {
+                    bluetoothSerial.setup();
+                }
+                break;
+        }
+    }
+
+    private void bindViews() {
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        bluetoothButton = findViewById(R.id.button);
+        bluetoothButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeviceListDialog();
+            }
+        });
+
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+    }
+
+
+    private void updateBluetoothState() {
+        // Get the current Bluetooth state
+        final int state;
+        if (bluetoothSerial != null)
+            state = bluetoothSerial.getState();
+        else
+            state = BluetoothSerial.STATE_DISCONNECTED;
+
+        // Display the current state on the app bar as the subtitle
+        String subtitle;
+        switch (state) {
+            case BluetoothSerial.STATE_CONNECTING:
+                subtitle = getString(R.string.connecting_device);
+                break;
+            case BluetoothSerial.STATE_CONNECTED:
+                subtitle = getString(R.string.connected_device) + bluetoothSerial.getConnectedDeviceName();
+                break;
+            default:
+                subtitle = getString(R.string.find_device);
+                break;
+        }
+
+        if (bluetoothButton != null) {
+            bluetoothButton.setText(subtitle);
+        }
+    }
+
+    private void showDeviceListDialog() {
+        // Display dialog for selecting a remote Bluetooth device
+        BluetoothDeviceListDialog dialog = new BluetoothDeviceListDialog(this);
+        dialog.setOnDeviceSelectedListener(this);
+        dialog.setTitle("Choose a paired Bluetooth device");
+        dialog.setDevices(bluetoothSerial.getPairedDevices());
+        dialog.showAddress(true);
+        dialog.show();
+    }
+
+    // Should this return null?
+    public BluetoothSerial getBluetoothSerial() {
+        return bluetoothSerial;
+    }
+
+    /* Implementation of BluetoothSerialListener */
+    @Override
+    public void onBluetoothNotSupported() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.no_bluetooth)
+                .setPositiveButton(R.string.action_quit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    public void onBluetoothDisabled() {
+        Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableBluetooth, REQUEST_ENABLE_BLUETOOTH);
+    }
+
+    @Override
+    public void onBluetoothDeviceDisconnected() {
+        updateBluetoothState();
+    }
+
+    @Override
+    public void onConnectingBluetoothDevice() {
+        updateBluetoothState();
+    }
+
+    @Override
+    public void onBluetoothDeviceConnected(String name, String address) {
+        updateBluetoothState();
+    }
+
+    @Override
+    public void onBluetoothSerialRead(String message) {
+        // Print the incoming message on the terminal screen
+    }
+
+    @Override
+    public void onBluetoothSerialWrite(String message) {
+        // Print the outgoing message on the terminal screen
+    }
+
+    @Override
+    public void onBluetoothDeviceSelected(BluetoothDevice device) {
+        // Connect to the selected remote Bluetooth device
+        bluetoothSerial.connect(device);
+    }
+    /* END Implementation of BluetoothSerialListener */
+
 }
