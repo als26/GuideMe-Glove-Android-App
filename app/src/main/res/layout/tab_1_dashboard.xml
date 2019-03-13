@@ -21,17 +21,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        android:id="@+id/myRectangleView"
+        android:id="@+id/batteryLevelThree"
         android:layout_width="98dp"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
         android:background="@drawable/rectangle"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <View
-        android:id="@+id/myRectangleView2"
+        android:id="@+id/batteryLevelTwo"
         android:layout_width="98dp"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
@@ -39,10 +40,10 @@
         android:layout_weight="1"
         android:background="@drawable/rectangle"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
-        app:layout_constraintTop_toBottomOf="@+id/myRectangleView" />
+        app:layout_constraintTop_toBottomOf="@+id/batteryLevelThree" />
 
     <View
-        android:id="@+id/myRectangleView3"
+        android:id="@+id/batteryLevelOne"
         android:layout_width="98dp"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
@@ -50,7 +51,7 @@
         android:layout_weight="1"
         android:background="@drawable/rectangle"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
-        app:layout_constraintTop_toBottomOf="@+id/myRectangleView2" />
+        app:layout_constraintTop_toBottomOf="@+id/batteryLevelTwo" />
 
     <View
         android:id="@+id/myRectangleView4"
@@ -60,7 +61,7 @@
         android:layout_marginTop="50dp"
         android:layout_weight="1"
         android:background="@drawable/rectangle"
-        app:layout_constraintStart_toEndOf="@+id/myRectangleView2"
+        app:layout_constraintStart_toEndOf="@+id/batteryLevelTwo"
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <View
@@ -140,7 +141,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/battery_percentage"
         android:layout_width="135dp"
         android:layout_height="102dp"
         android:layout_marginStart="64dp"
@@ -152,7 +153,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/time_remaining_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
@@ -165,7 +166,7 @@
 
     <!--TODO : Different font size for H and Min -->
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/time_remaining"
         android:layout_width="316dp"
         android:layout_height="94dp"
         android:layout_marginStart="44dp"
@@ -174,6 +175,6 @@
         android:textColor="@color/textColorBlack"
         android:textSize="64sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintTop_toBottomOf="@+id/time_remaining_header" />
 
 </android.support.constraint.ConstraintLayout>

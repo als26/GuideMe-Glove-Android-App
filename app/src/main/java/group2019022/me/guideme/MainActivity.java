@@ -4,26 +4,33 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.LayoutInflater;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.macroyau.blue2serial.BluetoothDeviceListDialog;
 import com.macroyau.blue2serial.BluetoothSerial;
 import com.macroyau.blue2serial.BluetoothSerialListener;
+import com.macroyau.blue2serial.BluetoothSerialRawListener;
 
 import group2019022.me.guideme.fragments.SectionsPagerAdapter;
 
-public class MainActivity extends AppCompatActivity implements BluetoothSerialListener, BluetoothDeviceListDialog.OnDeviceSelectedListener {
+public class MainActivity extends AppCompatActivity implements BluetoothSerialListener, BluetoothSerialRawListener, BluetoothDeviceListDialog.OnDeviceSelectedListener {
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     private BluetoothSerial bluetoothSerial;
@@ -44,14 +51,28 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
     private ViewPager mViewPager;
     private Toolbar mToolbar;
     private Button bluetoothButton;
+    private TextView batteryPercent;
 
+    private View batteryLevelOne;
+    private View batteryLevelTwo;
+    private View batteryLevelThree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bindViews();
+
         bluetoothSerial = new BluetoothSerial(this, this);
+
+        //using layout inflator to get reference to views on tab1dashboard
+        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        View v = layoutInflater.inflate(R.layout.tab_1_dashboard, null);
+
+        batteryLevelOne = v.findViewById(R.id.batteryLevelOne);
+        batteryLevelTwo = v.findViewById(R.id.batteryLevelTwo);
+        batteryLevelThree = v.findViewById(R.id.batteryLevelThree);
+        batteryPercent = v.findViewById(R.id.battery_percentage);
     }
 
     @Override
@@ -214,7 +235,11 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
 
     @Override
     public void onBluetoothSerialRead(String message) {
-        // Print the incoming message on the terminal screen
+        //batteryPercent.setText(message);
+        //Log.d("bluetoothRecv", message);
+        if (message == "1") {
+            batteryLevelThree.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -228,5 +253,19 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
         bluetoothSerial.connect(device);
     }
     /* END Implementation of BluetoothSerialListener */
+
+    /* Implementation of BluetoothSerialListener - RAW */
+
+    @Override
+    public void onBluetoothSerialReadRaw(byte[] bytes) {
+
+    }
+
+    @Override
+    public void onBluetoothSerialWriteRaw(byte[] bytes) {
+
+    }
+    /* END Implementation of BluetoothSerialListener - RAW */
+
 
 }

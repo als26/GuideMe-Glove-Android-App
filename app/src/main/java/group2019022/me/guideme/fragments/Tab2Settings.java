@@ -3,11 +3,14 @@ package group2019022.me.guideme.fragments;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import group2019022.me.guideme.R;
 
@@ -18,6 +21,8 @@ public class Tab2Settings extends BaseFragment {
     SeekBar distanceSlider;
     TextView vibrationValue;
     TextView distanceValue;
+    Button vibrationToggle;
+    boolean vibrationState;
 
     //variables for Shared preferences
     SharedPreferences sPreferences;
@@ -49,6 +54,10 @@ public class Tab2Settings extends BaseFragment {
         vibrationSlider.setMax(2);
         vibrationValue = rootView.findViewById(R.id.textView2);
 
+        vibrationToggle = rootView.findViewById(R.id.vibrationToggle);
+        vibrationToggle.setText("Turn off Vibration Feedback");
+        vibrationState = true;
+
         distanceSlider = rootView.findViewById(R.id.seekBar2);
         distanceSlider.setMax(7);
         distanceValue = rootView.findViewById(R.id.textView6);
@@ -63,12 +72,6 @@ public class Tab2Settings extends BaseFragment {
         loadedDistanceDisplay = sPreferences.getString(Key_DISTANCE_VALUE, "0");
         distanceValue.setText(loadedDistanceDisplay);
 
-//        bluetooth = new BluetoothSPP(getActivity());
-//        if (!bluetooth.isBluetoothAvailable()) {
-//            Toast.makeText(getActivity().getApplicationContext(), "Bluetooth is not available", Toast.LENGTH_SHORT).show();
-//            getActivity().finish();
-//        }
-        //handling vibration slider changes
         vibrationSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
@@ -101,9 +104,40 @@ public class Tab2Settings extends BaseFragment {
 
                 //send data to bluetooth
                 if (getMainActivity().getBluetoothSerial().isConnected()) {
-                    getMainActivity().getBluetoothSerial().write(Key_VIBRATION_SLIDER);
+                    getMainActivity().getBluetoothSerial().write("v" + (savedVibrationSlider));
+                    Log.d("sentVibrationValues", "Value: " + Integer.toString(savedVibrationSlider));
                 }
 
+            }
+        });
+
+        vibrationToggle.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (vibrationState) {
+                    if (getMainActivity().getBluetoothSerial().isConnected()) {
+                        vibrationState = false;
+                        vibrationToggle.setText("Turn on Vibration Feedback");
+                        getMainActivity().getBluetoothSerial().write("v3");
+                    }
+
+                    else {
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Please connect Bluetooth Device", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }
+
+                else {
+                    if (getMainActivity().getBluetoothSerial().isConnected()) {
+                        vibrationState = true;
+                        vibrationToggle.setText("Turn off Vibration Feedback");
+                        getMainActivity().getBluetoothSerial().write("v" + (vibrationSlider.getProgress()));
+                        Log.d("buttonVibrationValue", "Value: " + Integer.toString(vibrationSlider.getProgress()));
+                    }
+                    else {
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Please connect Bluetooth Device", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }
             }
         });
 
@@ -139,6 +173,11 @@ public class Tab2Settings extends BaseFragment {
                 editor.putInt(Key_DISTANCE_SLIDER, savedDistanceSlider);
                 editor.putString(Key_DISTANCE_VALUE, savedDistanceDisplay);
                 editor.commit();
+
+                if (getMainActivity().getBluetoothSerial().isConnected()) {
+                    getMainActivity().getBluetoothSerial().write("d" + (savedDistanceSlider));
+                    Log.d("sentDistanceValue", "Value: " + Integer.toString(savedDistanceSlider));
+                }
             }
         });
 

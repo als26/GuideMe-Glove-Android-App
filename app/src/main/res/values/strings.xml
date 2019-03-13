@@ -11,6 +11,7 @@
     <string name="vibration_default">XYZ%</string>
     <string name="vibration_min">Weak</string>
     <string name="vibration_max">Strong</string>
+    <!--<string name="vibration_off">Turn </string>-->
     <string name="distance_setting_header">Distance Detection</string>
     <string name="distance_default">XYZ m</string>
     <string name="distance_min">1.0 m</string>
