@@ -8,7 +8,7 @@
     tools:context=".fragments.Tab1Dashboard">
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/battery_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="47dp"
@@ -29,7 +29,7 @@
         android:background="@drawable/rectangle"
         android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <View
         android:id="@+id/batteryLevelTwo"
@@ -39,6 +39,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:background="@drawable/rectangle"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
         app:layout_constraintTop_toBottomOf="@+id/batteryLevelThree" />
 
@@ -50,6 +51,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:background="@drawable/rectangle"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
         app:layout_constraintTop_toBottomOf="@+id/batteryLevelTwo" />
 
@@ -62,7 +64,7 @@
         android:layout_weight="1"
         android:background="@drawable/rectangle"
         app:layout_constraintStart_toEndOf="@+id/batteryLevelTwo"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <View
         android:id="@+id/myRectangleView5"
@@ -73,7 +75,7 @@
         android:layout_weight="1"
         android:background="@drawable/rectangle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <View
         android:id="@+id/myRectangleView6"
@@ -94,7 +96,7 @@
         android:layout_weight="1"
         android:background="@drawable/rectangle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <View
         android:id="@+id/myRectangleView8"
@@ -106,7 +108,7 @@
         android:background="@drawable/rectangle"
         app:layout_constraintBottom_toTopOf="@+id/myRectangleView5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <View
         android:id="@+id/myRectangleView9"
@@ -118,7 +120,7 @@
         android:background="@drawable/rectangle"
         app:layout_constraintBottom_toTopOf="@+id/myRectangleView4"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView8"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <View
         android:id="@+id/myRectangleView10"
@@ -146,11 +148,10 @@
         android:layout_height="102dp"
         android:layout_marginStart="64dp"
         android:layout_marginTop="72dp"
-        android:text="75%"
         android:textColor="@color/textColorBlack"
         android:textSize="64sp"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView4"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintTop_toBottomOf="@+id/battery_header" />
 
     <TextView
         android:id="@+id/time_remaining_header"

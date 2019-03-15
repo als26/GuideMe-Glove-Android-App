@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.constraint.solver.widgets.Rectangle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -53,9 +50,15 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
     private Button bluetoothButton;
     private TextView batteryPercent;
 
-    private View batteryLevelOne;
-    private View batteryLevelTwo;
-    private View batteryLevelThree;
+    private View vBatteryLevelOne;
+    private View vBatteryLevelTwo;
+    private View vBatteryLevelThree;
+
+    private String batteryLevelMsg;
+    private float recvBatteryLevel;
+    private int convBatteryLevel;
+    private float batteryMax;
+    private float batteryMin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +68,29 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
 
         bluetoothSerial = new BluetoothSerial(this, this);
 
-        //using layout inflator to get reference to views on tab1dashboard
-        LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
-        View v = layoutInflater.inflate(R.layout.tab_1_dashboard, null);
+        batteryLevelMsg = "%";
+        batteryMax = 4.2f;
+        batteryMin = 3.2f;
 
-        batteryLevelOne = v.findViewById(R.id.batteryLevelOne);
-        batteryLevelTwo = v.findViewById(R.id.batteryLevelTwo);
-        batteryLevelThree = v.findViewById(R.id.batteryLevelThree);
+        //using layout inflator to get reference to views on tab1dashboard
+        //LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
+        //View v = layoutInflater.inflate(R.layout.tab_1_dashboard, null);
+        View v = getLayoutInflater().inflate(R.layout.tab_1_dashboard, null);
+
+
+
+        vBatteryLevelOne = v.findViewById(R.id.batteryLevelOne);
+        vBatteryLevelTwo = v.findViewById(R.id.batteryLevelTwo);
+        vBatteryLevelThree = v.findViewById(R.id.batteryLevelThree);
         batteryPercent = v.findViewById(R.id.battery_percentage);
+
+        vBatteryLevelOne.setVisibility(View.INVISIBLE);
+        vBatteryLevelTwo.setVisibility(View.INVISIBLE);
+        vBatteryLevelThree.setVisibility(View.INVISIBLE);
+        batteryPercent.setText(batteryLevelMsg);
+
+        bluetoothSerial.setup();
+        updateBluetoothState();
     }
 
     @Override
@@ -100,8 +118,20 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
     @Override
     protected void onStart() {
         super.onStart();
-        bluetoothSerial.setup();
-        updateBluetoothState();
+
+//        if (bluetoothSerial != null) {
+//            if (bluetoothSerial.checkBluetooth() && bluetoothSerial.isBluetoothEnabled()) {
+//                if (!bluetoothSerial.isConnected()) {
+//                    bluetoothSerial.setup();
+//                }
+//            }
+//        }
+//
+//        else {
+
+//        }
+
+        //updateBluetoothState();
     }
 
     @Override
@@ -159,10 +189,12 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
     private void updateBluetoothState() {
         // Get the current Bluetooth state
         final int state;
-        if (bluetoothSerial != null)
+        if (bluetoothSerial != null) {
             state = bluetoothSerial.getState();
-        else
+            Log.d("bluetoothState", "updateBluetoothState: " + Integer.toString(state));
+        }   else {
             state = BluetoothSerial.STATE_DISCONNECTED;
+        }
 
         // Display the current state on the app bar as the subtitle
         String subtitle;
@@ -237,8 +269,41 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
     public void onBluetoothSerialRead(String message) {
         //batteryPercent.setText(message);
         //Log.d("bluetoothRecv", message);
-        if (message == "1") {
-            batteryLevelThree.setVisibility(View.INVISIBLE);
+        if (message.contains("3.") || message.contains("4.")) {
+            try {
+                recvBatteryLevel = Float.parseFloat(message);
+            }
+            catch (NumberFormatException e) {
+                //do nothing
+            }
+        }
+
+        convBatteryLevel = (int)((recvBatteryLevel - batteryMin)*100);
+        batteryLevelMsg = Float.toString(convBatteryLevel);
+        batteryPercent.setText(batteryLevelMsg);
+
+        if (convBatteryLevel <= 25) {
+            vBatteryLevelOne.setVisibility(View.INVISIBLE);
+            vBatteryLevelTwo.setVisibility(View.INVISIBLE);
+            vBatteryLevelThree.setVisibility(View.INVISIBLE);
+        }
+
+        else if (convBatteryLevel > 25 && convBatteryLevel <= 50) {
+            vBatteryLevelOne.setVisibility(View.VISIBLE);
+            vBatteryLevelTwo.setVisibility(View.INVISIBLE);
+            vBatteryLevelThree.setVisibility(View.INVISIBLE);
+        }
+
+        else if (convBatteryLevel > 50 && convBatteryLevel <= 75) {
+            vBatteryLevelOne.setVisibility(View.VISIBLE);
+            vBatteryLevelTwo.setVisibility(View.VISIBLE);
+            vBatteryLevelThree.setVisibility(View.INVISIBLE);
+        }
+
+        else {
+            vBatteryLevelOne.setVisibility(View.VISIBLE);
+            vBatteryLevelTwo.setVisibility(View.VISIBLE);
+            vBatteryLevelThree.setVisibility(View.VISIBLE);
         }
     }
 
