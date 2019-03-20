@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -75,14 +76,14 @@ public class MainActivity extends AppCompatActivity implements BluetoothSerialLi
         //using layout inflator to get reference to views on tab1dashboard
         //LayoutInflater layoutInflater = (LayoutInflater)this.getSystemService(this.LAYOUT_INFLATER_SERVICE);
         //View v = layoutInflater.inflate(R.layout.tab_1_dashboard, null);
-        View v = getLayoutInflater().inflate(R.layout.tab_1_dashboard, null);
+        View v = (ConstraintLayout)getLayoutInflater().inflate(R.layout.tab_1_dashboard, null);
 
 
 
         vBatteryLevelOne = v.findViewById(R.id.batteryLevelOne);
         vBatteryLevelTwo = v.findViewById(R.id.batteryLevelTwo);
         vBatteryLevelThree = v.findViewById(R.id.batteryLevelThree);
-        batteryPercent = v.findViewById(R.id.battery_percentage);
+        batteryPercent = (TextView)v.findViewById(R.id.battery_percentage);
 
         vBatteryLevelOne.setVisibility(View.INVISIBLE);
         vBatteryLevelTwo.setVisibility(View.INVISIBLE);
