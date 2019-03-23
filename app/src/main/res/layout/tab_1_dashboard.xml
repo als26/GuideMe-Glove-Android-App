@@ -39,6 +39,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:background="@drawable/rectangle"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
         app:layout_constraintTop_toBottomOf="@+id/batteryLevelThree" />
 
@@ -50,6 +51,7 @@
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:background="@drawable/rectangle"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView5"
         app:layout_constraintTop_toBottomOf="@+id/batteryLevelTwo" />
 
@@ -146,6 +148,7 @@
         android:layout_height="102dp"
         android:layout_marginStart="64dp"
         android:layout_marginTop="72dp"
+        android:text="\?%"
         android:textColor="@color/textColorBlack"
         android:textSize="64sp"
         app:layout_constraintStart_toEndOf="@+id/myRectangleView4"
@@ -167,10 +170,10 @@
     <TextView
         android:id="@+id/time_remaining"
         android:layout_width="316dp"
-        android:layout_height="94dp"
+        android:layout_height="185dp"
         android:layout_marginStart="44dp"
         android:layout_marginTop="24dp"
-        android:text="3H 42MIN"
+        android:text="Unknown"
         android:textColor="@color/textColorBlack"
         android:textSize="64sp"
         app:layout_constraintStart_toStartOf="parent"

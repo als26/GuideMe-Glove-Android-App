@@ -5,11 +5,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import group2019022.me.guideme.MainActivity;
+import group2019022.me.guideme.SharedViewModel;
 
 public class BaseFragment extends Fragment {
 
     private MainActivity activity;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

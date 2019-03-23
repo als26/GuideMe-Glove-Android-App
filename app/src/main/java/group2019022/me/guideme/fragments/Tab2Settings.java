@@ -188,8 +188,5 @@ public class Tab2Settings extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
-
-        // Disconnect from the remote device and close the serial port
-        //bluetoothSerial.stop();
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GuideMe</string>
+    <string name="app_name">Guide-Me</string>
 
     <string name="tab_text_1">Dashboard</string>
     <string name="tab_text_2">Settings</string>
@@ -11,15 +11,14 @@
     <string name="vibration_default">XYZ%</string>
     <string name="vibration_min">Weak</string>
     <string name="vibration_max">Strong</string>
-    <!--<string name="vibration_off">Turn </string>-->
     <string name="distance_setting_header">Distance Detection</string>
     <string name="distance_default">XYZ m</string>
     <string name="distance_min">1.0 m</string>
     <string name="distance_max">4.5 m</string>
 
-    <string name="find_device">Find GuideMe Glove Device \n (disconnected)</string>
-    <string name="connecting_device">Connecting to GuideMe Glove Device \n ....</string>
-    <string name="connected_device">Connected to GuideMe Glove Device:\n</string>
+    <string name="find_device">Find Guide-Me Glove Device \n (disconnected)</string>
+    <string name="connecting_device">Connecting to Guide-Me Glove Device \n ....</string>
+    <string name="connected_device">Connected to Guide-Me Glove Device:\n</string>
 
     <string name="action_settings">Settings</string>
 
